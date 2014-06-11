@@ -6,11 +6,17 @@
 
 package dvdrent;
 
+import org.xml.sax.ext.LexicalHandler;
+
+import models.ClientModel;
+import models.DvdModel;
+
 /**
  *
  * @author krutulj
  */
 public class App extends javax.swing.JFrame {
+	DBHelperImpl db = new DBHelperImpl();
 
     /**
      * Creates new form App
@@ -473,16 +479,54 @@ public class App extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private static void log(String text){
+    	outputTextArea.append(text+"\n");
+    }
+    
     private void addUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserButtonActionPerformed
-        // TODO add your handling code here:
+    	String name, surname, phone;
+    	name = nameTextField.getText();
+    	surname = surnameTextField.getText();
+    	phone = phoneTextField.getText();
+    	ClientModel clientToSave = new ClientModel(name, surname, phone);
+    	Integer clientId = db.addClient(clientToSave);
+    	if (clientId != null){
+    		ClientModel cm = db.findClient(clientId);
+    		log(cm+" has been created");
+    	}else{
+    		log("ERROR!!! client "+clientToSave+" hasn't been saved to database");
+    	} 	
     }//GEN-LAST:event_addUserButtonActionPerformed
 
     private void addNewDvDButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewDvDButtonActionPerformed
-        // TODO add your handling code here:
+        String title, genre, year, lenght;
+        title = titleTextField.getText();
+        genre = genreTextField.getText();
+        year = yearTextField.getText();
+        lenght = lenghtTextField.getText();
+        DvdModel dvdToSave = new DvdModel(title, genre, Integer.parseInt(year), Integer.parseInt(lenght));
+        Integer dvdId = db.addDVD(dvdToSave);
+    	if (dvdId != null){
+    		DvdModel dm = db.findDvd(dvdId);
+    		log(dm+" has been created");
+    	}else{
+    		log("ERROR!!! dvd "+dvdToSave+" hasn't been saved to database");
+    	} 	
+        
     }//GEN-LAST:event_addNewDvDButtonActionPerformed
 
     private void rentDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rentDvdButtonActionPerformed
-        // TODO add your handling code here:
+    	int clientId, dvdId;
+    	clientId = Integer.parseInt(clientIdTextField.getText());
+    	dvdId = Integer.parseInt(dvdIdTextField.getText());
+    	ClientModel client = db.findClient(clientId);
+    	DvdModel dvd = db.findDvd(dvdId);
+    	
+    	
+    	dvd.setRentedBy(client);
+    	
+    	
+    	
     }//GEN-LAST:event_rentDvdButtonActionPerformed
 
     private void returnDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnDvdButtonActionPerformed
@@ -592,7 +636,7 @@ public class App extends javax.swing.JFrame {
     private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField optClientIdTextField;
     private javax.swing.JTextField optDvdIdTextField;
-    private javax.swing.JTextArea outputTextArea;
+    private static javax.swing.JTextArea outputTextArea;
     private javax.swing.JTextField phoneTextField;
     private javax.swing.JButton removeClientButton;
     private javax.swing.JButton removeDvdButton;

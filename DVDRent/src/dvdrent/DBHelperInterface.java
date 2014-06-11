@@ -20,15 +20,15 @@ public interface DBHelperInterface {
      * @param client that will be add to database
      * @return id of existing or new client
      */
-    int addClient(ClientModel client);
-    boolean removeClient(int clientId);
+    Integer addClient(ClientModel client);
+    boolean removeClient(Integer clientId);
     
     /**
      * Adds new dvd to database
      * @param dvd
      * @return 
      */
-    int addDVD(DvdModel dvd);
+    Integer addDVD(DvdModel dvd);
     boolean removeDVD();
     
     List listClients();
@@ -36,10 +36,10 @@ public interface DBHelperInterface {
     List listRentedDvds();
     List listClientWhoRentSomething();
     
-    ClientModel findClient(int cliendId);
-    DvdModel findDvd(int dvdId);    
+    ClientModel findClient(Integer cliendId);
+    DvdModel findDvd(Integer dvdId);    
     
-    boolean rentDvd(int clientId, int dvdId);
-    boolean returnDvd(int dvdId);
+    boolean rentDvd(Integer clientId, Integer dvdId);
+    boolean returnDvd(Integer dvdId);
     
 }

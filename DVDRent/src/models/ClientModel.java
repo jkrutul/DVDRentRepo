@@ -11,12 +11,13 @@ package models;
  * @author krutulj
  */
 public class ClientModel {
-    private int id;
-    private String name, surname;
+    private Integer id;
+    private String name, surname, phone;
     
-    public ClientModel(String name, String surname) {
+    public ClientModel(String name, String surname, String phone) {
         this.name = name;
         this.surname = surname;
+        this.phone = phone;
     }
 
     public ClientModel(int id, String name, String surname) {
@@ -26,11 +27,11 @@ public class ClientModel {
     }
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -54,6 +55,14 @@ public class ClientModel {
     public String toString() {
         return "ClientModel{" + "id=" + id + ", name=" + name + ", surname=" + surname + '}';
     }
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
     
 
 }

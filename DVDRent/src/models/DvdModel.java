@@ -11,7 +11,7 @@ package models;
  * @author krutulj
  */
 public class DvdModel {
-    private int id;
+    private Integer id;
     private String title, genre;
     private int year, lenght;
     private ClientModel rentedBy; 
@@ -39,11 +39,11 @@ public class DvdModel {
     public void setRentedBy(ClientModel rentedBy) {
         this.rentedBy = rentedBy;
     }
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
