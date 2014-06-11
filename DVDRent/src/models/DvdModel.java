@@ -81,7 +81,11 @@ public class DvdModel {
 
     @Override
     public String toString() {
-        return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + ", rentedBy=" + rentedBy + '}';
+    	if(rentedBy != null)
+    		return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + ", rentedBy=" + rentedBy + '}';
+    	else{
+    		return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + " - is avaliable}";
+    	}
     }
     
     

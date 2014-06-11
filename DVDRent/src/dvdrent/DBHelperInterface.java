@@ -23,6 +23,7 @@ public interface DBHelperInterface {
     Integer addClient(ClientModel client);
     boolean removeClient(Integer clientId);
     
+    
     /**
      * Adds new dvd to database
      * @param dvd
@@ -30,13 +31,16 @@ public interface DBHelperInterface {
      */
     Integer addDVD(DvdModel dvd);
     boolean removeDVD();
+    Integer updateDVD(DvdModel dvd);
     
     List listClients();
     List listDvds();
     List listRentedDvds();
     List listClientWhoRentSomething();
     
-    ClientModel findClient(Integer cliendId);
+    
+
+    ClientModel findClient(Integer clientId);
     DvdModel findDvd(Integer dvdId);    
     
     boolean rentDvd(Integer clientId, Integer dvdId);

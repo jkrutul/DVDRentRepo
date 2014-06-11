@@ -56,7 +56,7 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 
 	@Override
-	public ClientModel findClient(Integer cliendId) {
+	public ClientModel findClient(Integer clientId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -77,6 +77,12 @@ public class DBHelperImpl implements DBHelperInterface{
 	public boolean returnDvd(Integer dvdId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Integer updateDVD(DvdModel dvd) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
