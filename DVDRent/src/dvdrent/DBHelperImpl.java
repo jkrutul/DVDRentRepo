@@ -35,8 +35,8 @@ public class DBHelperImpl implements DBHelperInterface{
 		}
 		db = mongoClient.getDB(DB_NAME);
 		dropCollections();
-		db.createCollection(CLIENT, new BasicDBObject("capped", true).append("size", 1048576));
-		db.createCollection(DVD, new BasicDBObject("capped", true).append("size", 1048576));
+		db.createCollection(CLIENT, new BasicDBObject("capped", false).append("size", 1048576));
+		db.createCollection(DVD, new BasicDBObject("capped", false).append("size", 1048576));
 		getListOfCollections();
 	}
 	
@@ -207,12 +207,15 @@ public class DBHelperImpl implements DBHelperInterface{
 		ClientModel cm = findClient(clientId);
 		DvdModel dm = findDvd(dvdId);
 		if(cm!= null && dm!=null){
+			
 			dm.setRentedBy(cm.getId());
 			if(updateDVD(dm) == dvdId)
 				return true;
 			else 
 				return false;
+			
 		}
+		
 		return false;
 	}
 
@@ -232,19 +235,20 @@ public class DBHelperImpl implements DBHelperInterface{
 	@Override
 	public ObjectId updateDVD(DvdModel dvd) {
 		DBCollection coll = db.getCollection(DVD);
-		BulkWriteOperation builder = coll.initializeOrderedBulkOperation();
 		BasicDBObject query = new BasicDBObject("id", dvd.getId());
 		
 		BasicDBObject doc = new BasicDBObject("title", dvd.getTitle())
         .append("genre",dvd.getGenre())
         .append("year", dvd.getYear())
-        .append("lenght", dvd.getLenght()).append("id", dvd.getId());
+        .append("lenght", dvd.getLenght()).append("id", dvd.getId()).append("rentedBy", dvd.getRentedBy());
 		
-		builder.find(query).updateOne(doc);
+		BasicDBObject update=new BasicDBObject();
+		update.append("$set", doc);
 		
-		BulkWriteResult result = builder.execute();
+		WriteResult result=coll.update(query, update);
 		
-		System.out.println("Updated records: "+result.getModifiedCount());
+		
+		System.out.println("Updated records: "+result.toString());
 		
 		return dvd.getId();
 	}
