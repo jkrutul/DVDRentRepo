@@ -939,7 +939,7 @@ public class App extends javax.swing.JFrame {
 			return;
 		}
 
-		dvd.setRentedBy(client);
+		dvd.setRentedBy(client.getId());
 		log("DVD " + dvd.getTitle() + " has been rented for "
 				+ client.getName() + " " + client.getSurname());
 	}// GEN-LAST:event_rentDvdButtonActionPerformed
@@ -982,7 +982,7 @@ public class App extends javax.swing.JFrame {
 		List<DvdModel> rentedDvds = listOfRentedDvds();
 
 		for (DvdModel rented : rentedDvds) {
-			ClientModel rentedBy = rented.getRentedBy();
+			ClientModel rentedBy = db.findClient(rented.getRentedBy());
 			if (!clientsWhoRent.contains(rentedBy)) {
 				clientsWhoRent.add(rentedBy);
 			}
@@ -1061,7 +1061,7 @@ public class App extends javax.swing.JFrame {
 		log("Genre: " + dvd.getGenre());
 		log("Year: " + dvd.getYear());
 		log("Lenght: " + dvd.getLenght());
-		ClientModel rentedBy = dvd.getRentedBy();
+		ClientModel rentedBy = db.findClient(dvd.getRentedBy());
 
 		if (rentedBy != null) {
 			log("Rented By: " + rentedBy);
@@ -1092,7 +1092,7 @@ public class App extends javax.swing.JFrame {
 		LinkedList<DvdModel> allRentedDvds = (LinkedList<DvdModel>) listOfRentedDvds();
 
 		for (DvdModel rd : allRentedDvds) {
-			if (rd.getRentedBy() == cm) {
+			if (rd.getRentedBy() == cm.getId()) {
 				listOfDvds.add(rd);
 			}
 		}

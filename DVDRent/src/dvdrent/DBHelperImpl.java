@@ -1,7 +1,9 @@
 package dvdrent;
 /* http://docs.mongodb.org/ecosystem/tutorial/getting-started-with-java-driver/#getting-started-with-java-driver */
-import java.awt.List;
+
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
 
 import models.ClientModel;
 import models.DvdModel;
@@ -9,6 +11,8 @@ import models.DvdModel;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
 
@@ -56,7 +60,7 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 
 	@Override
-	public boolean removeClient(Integer clientId) {
+	public boolean removeClient(int clientId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -73,56 +77,131 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 
 	@Override
-	public boolean removeDVD() {
+	public boolean removeDVD(int dvdId) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public List listClients() {
+	public List<ClientModel> listClients() {
+		LinkedList<ClientModel> clients = new LinkedList<ClientModel>();
+		DBCollection coll = db.getCollection(CLIENT);
+		DBCursor cursor = coll.find();
+		try{
+			while(cursor.hasNext()){
+				DBObject doc = cursor.next();
+				ClientModel cm = new ClientModel((int) doc.get("id"),(String) doc.get("name"), (String)doc.get("surname"),(String) doc.get("phone"));
+				clients.add(cm);
+			}
+		}finally{
+			cursor.close();
+		}
+		return clients;
+	}
+
+	@Override
+	public List<DvdModel> listDvds() {
+		LinkedList<DvdModel> dvds = new LinkedList<DvdModel>();
+		DBCollection coll = db.getCollection(DVD);
+		DBCursor cursor = coll.find();
+		try{
+			while(cursor.hasNext()){
+				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
+				DvdModel dm = new DvdModel((int) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
+				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				
+				if(rentedById!= null){
+					dm.setRentedBy(rentedById);
+				}
+				dvds.add(dm);
+			}
+		}finally{
+			cursor.close();
+		}
+		return dvds;
+	}
+
+	@Override
+	public List<DvdModel> listRentedDvds() {
+		LinkedList<DvdModel> rentedDvds = new LinkedList<DvdModel>();
+		DBCollection coll = db.getCollection(DVD);
+		DBCursor cursor = coll.find();
+		try{
+			while(cursor.hasNext()){
+				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
+				DvdModel dm = new DvdModel((int) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
+				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				
+				if(rentedById!= null){
+					dm.setRentedBy(rentedById);
+					rentedDvds.add(dm);
+				}
+			}
+		}finally{
+			cursor.close();
+		}
+		return rentedDvds;
+	}
+
+	@Override
+	public List<ClientModel> listClientWhoRentSomething() {
+		LinkedList<ClientModel> clientsWhoRent = new LinkedList<ClientModel>();
+		DBCollection coll = db.getCollection(DVD);
+		DBCursor cursor = coll.find();
+		try{
+			while(cursor.hasNext()){
+				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
+				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				
+				if(rentedById!= null){
+					ClientModel cm = findClient(rentedById);
+					if(!clientsWhoRent.contains(cm)){
+						clientsWhoRent.add(cm);
+					}
+				}
+			}
+		}finally{
+			cursor.close();
+		}
+		return clientsWhoRent;
+	}
+
+	@Override
+	public ClientModel findClient(int clientId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List listDvds() {
+	public DvdModel findDvd(int dvdId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List listRentedDvds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List listClientWhoRentSomething() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ClientModel findClient(Integer clientId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public DvdModel findDvd(Integer dvdId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean rentDvd(Integer clientId, Integer dvdId) {
-		// TODO Auto-generated method stub
+	public boolean rentDvd(int clientId, int dvdId) {
+		ClientModel cm = findClient(clientId);
+		DvdModel dm = findDvd(dvdId);
+		if(cm!= null && dm!=null){
+			dm.setRentedBy(cm.getId());
+			if(updateDVD(dm) == dvdId)
+				return true;
+			else 
+				return false;
+		}
 		return false;
 	}
 
 	@Override
-	public boolean returnDvd(Integer dvdId) {
-		// TODO Auto-generated method stub
+	public boolean returnDvd(int dvdId) {
+		DvdModel dm = findDvd(dvdId);
+		if(dm!=null){
+			dm.setRentedBy(null);
+			if(updateDVD(dm) == dvdId)
+				return true;
+			else 
+				return false;
+		}
 		return false;
 	}
 

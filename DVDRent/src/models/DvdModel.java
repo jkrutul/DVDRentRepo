@@ -14,7 +14,7 @@ public class DvdModel {
     private Integer id;
     private String title, genre;
     private int year, lenght;
-    private ClientModel rentedBy; 
+    private Integer rentedById; 
 
     public DvdModel(String title, String genre, int year, int lenght) {
         this.title = title;
@@ -23,21 +23,29 @@ public class DvdModel {
         this.lenght = lenght;
     }
 
-    public DvdModel(int id, String title, String genre, int year, int lenght, ClientModel rentedBy) {
+    public DvdModel(int id, String title, String genre, int year, int lenght) {
         this.id = id;
         this.title = title;
         this.genre = genre;
         this.year = year;
         this.lenght = lenght;
-        this.rentedBy = rentedBy;
+    }
+    
+    public DvdModel(int id, String title, String genre, int year, int lenght, Integer rentedById) {
+        this.id = id;
+        this.title = title;
+        this.genre = genre;
+        this.year = year;
+        this.lenght = lenght;
+        this.rentedById = rentedById;
     }
 
-    public ClientModel getRentedBy() {
-        return rentedBy;
+    public Integer getRentedBy() {
+        return rentedById;
     }
 
-    public void setRentedBy(ClientModel rentedBy) {
-        this.rentedBy = rentedBy;
+    public void setRentedBy(Integer rentedById) {
+        this.rentedById = rentedById;
     }
     public Integer getId() {
         return id;
@@ -81,8 +89,8 @@ public class DvdModel {
 
     @Override
     public String toString() {
-    	if(rentedBy != null)
-    		return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + ", rentedBy=" + rentedBy + '}';
+    	if(rentedById != null)
+    		return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + ", rentedById=" + rentedById + '}';
     	else{
     		return "DvdModel{" + "id=" + id + ", title=" + title + ", genre=" + genre + ", year=" + year + ", lenght=" + lenght + " - is avaliable}";
     	}

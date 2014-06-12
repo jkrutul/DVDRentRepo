@@ -6,7 +6,9 @@
 
 package dvdrent;
 
-import java.awt.List;
+
+import java.util.List;
+
 import models.ClientModel;
 import models.DvdModel;
 
@@ -21,7 +23,7 @@ public interface DBHelperInterface {
      * @return id of existing or new client
      */
     Integer addClient(ClientModel client);
-    boolean removeClient(Integer clientId);
+    boolean removeClient(int clientId);
     
     
     /**
@@ -30,7 +32,7 @@ public interface DBHelperInterface {
      * @return 
      */
     Integer addDVD(DvdModel dvd);
-    boolean removeDVD();
+    boolean removeDVD(int dvdId);
     Integer updateDVD(DvdModel dvd);
     
     List listClients();
@@ -40,10 +42,10 @@ public interface DBHelperInterface {
     
     
 
-    ClientModel findClient(Integer clientId);
-    DvdModel findDvd(Integer dvdId);    
+    ClientModel findClient(int clientId);
+    DvdModel findDvd(int dvdId);    
     
-    boolean rentDvd(Integer clientId, Integer dvdId);
-    boolean returnDvd(Integer dvdId);
+    boolean rentDvd(int clientId, int dvdId);
+    boolean returnDvd(int dvdId);
     
 }
