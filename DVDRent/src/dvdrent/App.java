@@ -928,7 +928,9 @@ public class App extends javax.swing.JFrame {
 		ObjectId clientId, dvdId;
 		clientId = new ObjectId(clientIdTextField.getText().toString());
 		dvdId = new ObjectId(dvdIdTextField.getText().toString());
+		
 		ClientModel client = db.findClient(clientId);
+		
 		DvdModel dvd = db.findDvd(dvdId);
 		if (client == null) {
 			log("ERROR!!! client with Id:" + clientId
@@ -940,7 +942,7 @@ public class App extends javax.swing.JFrame {
 			return;
 		}
 
-		dvd.setRentedBy(client.getId());
+		db.rentDvd(clientId, dvdId);
 		log("DVD " + dvd.getTitle() + " has been rented for "
 				+ client.getName() + " " + client.getSurname());
 	}// GEN-LAST:event_rentDvdButtonActionPerformed
