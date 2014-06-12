@@ -6,53 +6,40 @@
 
 package models;
 
+import org.bson.types.ObjectId;
+
 /**
  *
  * @author krutulj
  */
-public class DvdModel {
-    private Integer id;
+public class DvdModel extends BaseModel{
     private String title, genre;
     private int year, lenght;
-    private Integer rentedById; 
+    private ObjectId rentedById; 
 
-    public DvdModel(String title, String genre, int year, int lenght) {
-        this.title = title;
-        this.genre = genre;
-        this.year = year;
-        this.lenght = lenght;
-    }
-
-    public DvdModel(int id, String title, String genre, int year, int lenght) {
-        this.id = id;
+    public DvdModel(ObjectId id, String title, String genre, int year, int lenght) {
+    	super(id);
         this.title = title;
         this.genre = genre;
         this.year = year;
         this.lenght = lenght;
     }
     
-    public DvdModel(int id, String title, String genre, int year, int lenght, Integer rentedById) {
-        this.id = id;
+    public DvdModel(ObjectId id, String title, String genre, int year, int lenght, ObjectId rentedById) {
+    	super(id);
         this.title = title;
         this.genre = genre;
         this.year = year;
         this.lenght = lenght;
-        this.rentedById = rentedById;
+        this.rentedById=rentedById;
     }
 
-    public Integer getRentedBy() {
+    public ObjectId getRentedBy() {
         return rentedById;
     }
 
-    public void setRentedBy(Integer rentedById) {
+    public void setRentedBy(ObjectId rentedById) {
         this.rentedById = rentedById;
-    }
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTitle() {

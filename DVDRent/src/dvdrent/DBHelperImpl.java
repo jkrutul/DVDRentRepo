@@ -5,10 +5,14 @@ import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.bson.types.ObjectId;
+
 import models.ClientModel;
 import models.DvdModel;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.BulkWriteOperation;
+import com.mongodb.BulkWriteResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -50,36 +54,49 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 	
 	@Override
-	public Integer addClient(ClientModel client) {
+	public ObjectId addClient(ClientModel client) {
+		client.generateId();
+		
 		DBCollection coll = db.getCollection(CLIENT);
 		BasicDBObject doc = new BasicDBObject("name", client.getName())
         .append("surname",client.getSurname())
-        .append("phone", client.getPhone());
+        .append("phone", client.getPhone()).append("id", client.getId());
+		
 		WriteResult wr = coll.insert(doc); 
-		return (Integer) wr.getField("id");	//TODO trzeba jakoś zwrócić id nowo dodanego klienta
+		return client.getId();
 	}
 
 	@Override
-	public boolean removeClient(int clientId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeClient(ObjectId clientId) {
+		DBCollection coll = db.getCollection(CLIENT);
+		BulkWriteOperation builder = coll.initializeOrderedBulkOperation();
+		BasicDBObject query = new BasicDBObject("id", clientId);
+		builder.find(query).removeOne();
+		BulkWriteResult result = builder.execute();
+		return result.getRemovedCount() > 0 ? true : false;
 	}
 
 	@Override
-	public Integer addDVD(DvdModel dvd) {
+	public ObjectId addDVD(DvdModel dvd) {
+		dvd.generateId();
+		
 		DBCollection coll = db.getCollection(DVD);
 		BasicDBObject doc = new BasicDBObject("title", dvd.getTitle())
         .append("genre",dvd.getGenre())
         .append("year", dvd.getYear())
-        .append("lenght", dvd.getLenght());
+        .append("lenght", dvd.getLenght()).append("id", dvd.getId());
 		WriteResult wr = coll.insert(doc); 
-		return (Integer) wr.getField("id");	//TODO trzeba jakoś zwrócić id nowo dodanej plyty
+		return dvd.getId();
 	}
 
 	@Override
-	public boolean removeDVD(int dvdId) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean removeDVD(ObjectId dvdId) {
+		DBCollection coll = db.getCollection(CLIENT);
+		BulkWriteOperation builder = coll.initializeOrderedBulkOperation();
+		BasicDBObject query = new BasicDBObject("id", dvdId);
+		builder.find(query).removeOne();
+		BulkWriteResult result = builder.execute();
+		return result.getRemovedCount() > 0 ? true : false;
 	}
 
 	@Override
@@ -90,7 +107,7 @@ public class DBHelperImpl implements DBHelperInterface{
 		try{
 			while(cursor.hasNext()){
 				DBObject doc = cursor.next();
-				ClientModel cm = new ClientModel((int) doc.get("id"),(String) doc.get("name"), (String)doc.get("surname"),(String) doc.get("phone"));
+				ClientModel cm = new ClientModel((ObjectId) doc.get("id"),(String) doc.get("name"), (String)doc.get("surname"),(String) doc.get("phone"));
 				clients.add(cm);
 			}
 		}finally{
@@ -107,8 +124,8 @@ public class DBHelperImpl implements DBHelperInterface{
 		try{
 			while(cursor.hasNext()){
 				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
-				DvdModel dm = new DvdModel((int) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
-				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				DvdModel dm = new DvdModel((ObjectId) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
+				ObjectId rentedById = (ObjectId) doc.get("rentedBy"); 
 				
 				if(rentedById!= null){
 					dm.setRentedBy(rentedById);
@@ -129,8 +146,8 @@ public class DBHelperImpl implements DBHelperInterface{
 		try{
 			while(cursor.hasNext()){
 				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
-				DvdModel dm = new DvdModel((int) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
-				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				DvdModel dm = new DvdModel((ObjectId) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
+				ObjectId rentedById = (ObjectId) doc.get("rentedBy"); 
 				
 				if(rentedById!= null){
 					dm.setRentedBy(rentedById);
@@ -151,7 +168,7 @@ public class DBHelperImpl implements DBHelperInterface{
 		try{
 			while(cursor.hasNext()){
 				DBObject doc = cursor.next(); // int id, String title, String genre, int year, int lenght, ClientModel rentedBy
-				Integer rentedById = (Integer) doc.get("rentedBy"); 
+				ObjectId rentedById = (ObjectId) doc.get("rentedBy"); 
 				
 				if(rentedById!= null){
 					ClientModel cm = findClient(rentedById);
@@ -166,20 +183,27 @@ public class DBHelperImpl implements DBHelperInterface{
 		return clientsWhoRent;
 	}
 
+	//FIXME
 	@Override
-	public ClientModel findClient(int clientId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ClientModel findClient(ObjectId clientId) {
+		DBCollection coll = db.getCollection(CLIENT);
+		BasicDBObject query = new BasicDBObject("id", clientId);
+		DBObject doc = coll.findOne(query);
+		ClientModel cm = new ClientModel((ObjectId) doc.get("id"),(String) doc.get("name"), (String)doc.get("surname"),(String) doc.get("phone"));
+		return cm;
 	}
 
 	@Override
-	public DvdModel findDvd(int dvdId) {
-		// TODO Auto-generated method stub
-		return null;
+	public DvdModel findDvd(ObjectId dvdId) {
+ 		DBCollection coll = db.getCollection(DVD);
+		BasicDBObject query = new BasicDBObject("id", dvdId);
+		DBObject doc = coll.findOne(query);
+		DvdModel dm = new DvdModel((ObjectId) doc.get("id"),(String) doc.get("title"), (String)doc.get("genre"),(int) doc.get("year"), (int) doc.get("lenght"));
+		return dm;
 	}
 
 	@Override
-	public boolean rentDvd(int clientId, int dvdId) {
+	public boolean rentDvd(ObjectId clientId, ObjectId dvdId) {
 		ClientModel cm = findClient(clientId);
 		DvdModel dm = findDvd(dvdId);
 		if(cm!= null && dm!=null){
@@ -193,7 +217,7 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 
 	@Override
-	public boolean returnDvd(int dvdId) {
+	public boolean returnDvd(ObjectId dvdId) {
 		DvdModel dm = findDvd(dvdId);
 		if(dm!=null){
 			dm.setRentedBy(null);
@@ -206,9 +230,23 @@ public class DBHelperImpl implements DBHelperInterface{
 	}
 
 	@Override
-	public Integer updateDVD(DvdModel dvd) {
-		// TODO Auto-generated method stub
-		return null;
+	public ObjectId updateDVD(DvdModel dvd) {
+		DBCollection coll = db.getCollection(DVD);
+		BulkWriteOperation builder = coll.initializeOrderedBulkOperation();
+		BasicDBObject query = new BasicDBObject("id", dvd.getId());
+		
+		BasicDBObject doc = new BasicDBObject("title", dvd.getTitle())
+        .append("genre",dvd.getGenre())
+        .append("year", dvd.getYear())
+        .append("lenght", dvd.getLenght()).append("id", dvd.getId());
+		
+		builder.find(query).updateOne(doc);
+		
+		BulkWriteResult result = builder.execute();
+		
+		System.out.println("Updated records: "+result.getModifiedCount());
+		
+		return dvd.getId();
 	}
 
 }

@@ -6,34 +6,28 @@
 
 package models;
 
+import org.bson.types.ObjectId;
+
 /**
  *
  * @author krutulj
  */
-public class ClientModel {
-    private Integer id;
+public class ClientModel extends BaseModel {
+    
     private String name, surname, phone;
     
+    public ClientModel(ObjectId id, String name, String surname, String phone) {
+    	super(id);
+        this.name = name;
+        this.surname = surname;
+        this.phone = phone;
+    }
+
     public ClientModel(String name, String surname, String phone) {
+        super(null);
         this.name = name;
         this.surname = surname;
         this.phone = phone;
-    }
-
-    public ClientModel(int id, String name, String surname, String phone) {
-        this.id = id;
-        this.name = name;
-        this.surname = surname;
-        this.phone = phone;
-    }
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getName() {

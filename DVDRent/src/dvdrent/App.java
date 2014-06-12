@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.bson.types.ObjectId;
 import org.xml.sax.ext.LexicalHandler;
 
 import models.ClientModel;
@@ -895,7 +896,7 @@ public class App extends javax.swing.JFrame {
 		surname = surnameTextField.getText();
 		phone = phoneTextField.getText();
 		ClientModel clientToSave = new ClientModel(name, surname, phone);
-		Integer clientId = db.addClient(clientToSave);
+		ObjectId clientId = db.addClient(clientToSave);
 		if (clientId != null) {
 			ClientModel cm = db.findClient(clientId);
 			log(cm + " has been created");
@@ -911,9 +912,9 @@ public class App extends javax.swing.JFrame {
 		genre = genreTextField.getText();
 		year = yearTextField.getText();
 		lenght = lenghtTextField.getText();
-		DvdModel dvdToSave = new DvdModel(title, genre, Integer.parseInt(year),
+		DvdModel dvdToSave = new DvdModel(null, title, genre, Integer.parseInt(year),
 				Integer.parseInt(lenght));
-		Integer dvdId = db.addDVD(dvdToSave);
+		ObjectId dvdId = db.addDVD(dvdToSave);
 		if (dvdId != null) {
 			DvdModel dm = db.findDvd(dvdId);
 			log(dm + " has been created");
@@ -924,9 +925,9 @@ public class App extends javax.swing.JFrame {
 	}// GEN-LAST:event_addNewDvDButtonActionPerformed
 
 	private void rentDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_rentDvdButtonActionPerformed
-		int clientId, dvdId;
-		clientId = Integer.parseInt(clientIdTextField.getText());
-		dvdId = Integer.parseInt(dvdIdTextField.getText());
+		ObjectId clientId, dvdId;
+		clientId = new ObjectId(clientIdTextField.getText().toString());
+		dvdId = new ObjectId(dvdIdTextField.getText().toString());
 		ClientModel client = db.findClient(clientId);
 		DvdModel dvd = db.findDvd(dvdId);
 		if (client == null) {
@@ -945,7 +946,7 @@ public class App extends javax.swing.JFrame {
 	}// GEN-LAST:event_rentDvdButtonActionPerformed
 
 	private void returnDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_returnDvdButtonActionPerformed
-		int dvdId = Integer.parseInt(returnDvdId.getText());
+		ObjectId dvdId = new ObjectId(returnDvdId.getText());
 		DvdModel dvd = db.findDvd(dvdId);
 		if (dvd == null) {
 			log("ERROR!!! dvd with Id:" + dvdId + " not found in database!");
@@ -953,7 +954,7 @@ public class App extends javax.swing.JFrame {
 		}
 
 		dvd.setRentedBy(null);
-		Integer updatedDvdId = db.updateDVD(dvd);
+		ObjectId updatedDvdId = db.updateDVD(dvd);
 		if (updatedDvdId != null && updatedDvdId == dvdId) {
 			log("dvd " + dvdId + " has been updated");
 		} else {
@@ -1007,7 +1008,7 @@ public class App extends javax.swing.JFrame {
 	}// GEN-LAST:event_listRentedDvdsButtonActionPerformed
 
 	private void findClientButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_findClientButtonActionPerformed
-		int clientId = Integer.parseInt(optClientIdTextField.getText());
+		ObjectId clientId = new ObjectId(optClientIdTextField.getText());
 		ClientModel client = db.findClient(clientId);
 		List<DvdModel> listOfRentedDvds;
 		if (client == null) {
@@ -1034,7 +1035,7 @@ public class App extends javax.swing.JFrame {
 
 	private void removeClientButtonActionPerformed(
 			java.awt.event.ActionEvent evt) {// GEN-FIRST:event_removeClientButtonActionPerformed
-		int clientId = Integer.parseInt(optClientIdTextField.getText());
+		ObjectId clientId = new ObjectId(optClientIdTextField.getText());
 		ClientModel client = db.findClient(clientId);
 		if (client == null) {
 			log("Client with Id:" + clientId + " not found in database!");
@@ -1050,7 +1051,7 @@ public class App extends javax.swing.JFrame {
 	}// GEN-LAST:event_removeClientButtonActionPerformed
 
 	private void findDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_findDvdButtonActionPerformed
-		int dvdId = Integer.parseInt(optDvdIdTextField.getText());
+		ObjectId dvdId = new ObjectId(optDvdIdTextField.getText());
 		DvdModel dvd = db.findDvd(dvdId);
 		if (dvd == null) {
 			log("dvd with Id:" + dvdId + " not found in database!");
@@ -1072,7 +1073,7 @@ public class App extends javax.swing.JFrame {
 	}// GEN-LAST:event_findDvdButtonActionPerformed
 
 	private void removeDvdButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_removeDvdButtonActionPerformed
-		int dvdId = Integer.parseInt(optDvdIdTextField.getText());
+		ObjectId dvdId = new ObjectId(optDvdIdTextField.getText());
 		DvdModel dvd = db.findDvd(dvdId);
 		if (dvd == null) {
 			log("dvd with Id:" + dvdId + " not found in database!");
