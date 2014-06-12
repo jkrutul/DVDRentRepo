@@ -73,6 +73,16 @@ public class DBHelperImpl implements DBHelperInterface{
 		BasicDBObject query = new BasicDBObject("id", clientId);
 		builder.find(query).removeOne();
 		BulkWriteResult result = builder.execute();
+		List<DvdModel> rented=listRentedDvds();
+		for(DvdModel processed : rented)
+		{
+			if(processed.getRentedBy().equals(clientId))
+			{
+				processed.setRentedBy(null);
+				updateDVD(processed);
+			}
+		}
+		
 		return result.getRemovedCount() > 0 ? true : false;
 	}
 
@@ -209,7 +219,7 @@ public class DBHelperImpl implements DBHelperInterface{
 		if(cm!= null && dm!=null){
 			
 			dm.setRentedBy(cm.getId());
-			if(updateDVD(dm) == dvdId)
+			if(updateDVD(dm).equals(dvdId))
 				return true;
 			else 
 				return false;
