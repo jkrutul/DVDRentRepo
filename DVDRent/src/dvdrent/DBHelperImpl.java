@@ -234,7 +234,7 @@ public class DBHelperImpl implements DBHelperInterface{
 		DvdModel dm = findDvd(dvdId);
 		if(dm!=null){
 			dm.setRentedBy(null);
-			if(updateDVD(dm) == dvdId)
+			if(updateDVD(dm).equals(dvdId))
 				return true;
 			else 
 				return false;

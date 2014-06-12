@@ -957,7 +957,7 @@ public class App extends javax.swing.JFrame {
 
 		dvd.setRentedBy(null);
 		ObjectId updatedDvdId = db.updateDVD(dvd);
-		if (updatedDvdId != null && updatedDvdId == dvdId) {
+		if (updatedDvdId != null && updatedDvdId.equals(dvdId)) {
 			log("dvd " + dvdId + " has been updated");
 		} else {
 			log("ERROR!!! dvd with Id:" + dvdId + " hasn't been updated!");
